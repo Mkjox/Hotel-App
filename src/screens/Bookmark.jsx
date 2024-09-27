@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Appointment = () => {
+const Bookmark = () => {
     return (
         <SafeAreaView>
-            <Text>This is Appointment Page</Text>
+            <Text>This is Bookmark Page</Text>
         </SafeAreaView>
     )
 }
@@ -15,4 +15,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Appointment;
+export default Bookmark;

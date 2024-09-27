@@ -5,7 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Home from "../screens/Home";
 import Schedule from "../screens/Schedule";
-import Appointment from "../screens/Appointment";
+import Bookmark from "../screens/Bookmark";
 import Profile from "../screens/Profile";
 import CustomTabBar from "../components/CustomTabBar";
 import Details from '../screens/Details';
@@ -28,8 +28,8 @@ function TabNavigator() {
             />
 
             <Tab.Screen
-                name="Appointment"
-                component={Appointment}
+                name="Bookmark"
+                component={Bookmark}
             />
 
             <Tab.Screen

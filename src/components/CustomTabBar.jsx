@@ -42,7 +42,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                 else if (route.name === 'Schedule') {
                     iconName = 'calendar'
                 }
-                else if (route.name === 'Appointment') {
+                else if (route.name === 'Bookmark') {
                     iconName = 'bookmark'
                 }
                 else if (route.name === 'Profile') {
@@ -62,14 +62,13 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                     >
                         <View style={{
                             position: 'absolute',
-                            padding: 10,
-                            backgroundColor: isFocused ? colors.lightGray : 'transparent',
+                            paddingBottom: 5,
                             borderRadius: 20,
-                            width: 100,
-                            flexDirection: 'row'
+                            flexDirection: 'row',
+                            height: 30
                         }}>
                             <Feather name={iconName} size={22} color={isFocused ? colors.blue : colors.darkGray} />
-                            <Text style={{ color: isFocused ? colors.blue : 'transparent', fontSize: 12, marginTop: 3, marginLeft: 5 }}>{label}</Text>
+                            <Text style={{ color: isFocused ? colors.blue : 'transparent', fontSize: 12, marginTop: 3, marginLeft: 5, fontWeight: '700' }}>{label}</Text>
                         </View>
                     </TouchableOpacity>
                 )
