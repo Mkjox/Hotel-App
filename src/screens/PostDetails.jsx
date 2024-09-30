@@ -1,12 +1,14 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View,Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Details = () => {
+const PostDetails = () => {
     return (
         <SafeAreaView>
-            <Text>This page is gonna be about App Details</Text>
+            <Text>
+                This is PostDetails
+            </Text>
         </SafeAreaView>
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -15,4 +17,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Details;
+export default PostDetails;

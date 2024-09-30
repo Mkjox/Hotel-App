@@ -1,8 +1,32 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
-import { View, Text, StyleSheet } from "react-native";
+import { useState, useContext, useEffect } from 'react';
+import { FontAwesome, Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, FlatList, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from '@react-navigation/native';
+import LikeContext from '../assets/context/LikeContext';
+import BookmarkContext from '../assets/context/BookmarkContext';
+import { BASE_URL, POSTS_URL } from '../assets/services/urls';
+import colors from '../assets/colors/colors.js';
+import postData from '../assets/data/postData.js';
+import { Card } from 'react-native-paper';
 
 const Home = () => {
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [loading, setLoading] = useState(true);
+    const navigation = useNavigation();
+    const { like, addLike, removeLike } = useContext(LikeContext);
+    const { bookmark, addBookmark, removeBookmark } = useContext(BookmarkContext);
+
+    const categories = ['all', ...new Set(postData.map(post => post.category))];
+
+    const filteredPosts = selectedCategory === 'all'
+        ? postData
+        : postData.filter(post => post.category.toLowerCase() === selectedCategory.toLowerCase());
+
+    if (loading) {
+        return <ActivityIndicator size="large" color={colors.yellow} />;
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.title}>
@@ -17,8 +41,26 @@ const Home = () => {
                 </View>
             </View>
 
+            <View>
+                {categories.map((category, index) => (
+                    <TouchableOpacity
+                        key={index}
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === category && styles.selectedCategoryButton
+                        ]}
+                        onPress={() => setSelectedCategory(category)}
+                    >
+                        <Text style={[
+                            styles.categoryText,
+                            setSelectedCategory === category && styles.selectedCategoryText
+                        ]}>
+                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
 
-            {/* FLATLIST FOR BUTTONS GOES HERE */}
 
             <View style={styles.highlightedWrapper}>
                 <Text style={styles.highlightedTitle}>Near Location</Text>
@@ -32,7 +74,65 @@ const Home = () => {
                 <Text style={styles.popularMoreButton}>See All</Text>
             </View>
 
-            <Text>{/* FLATLIST FOR VERTICAL HOTELS GOES HERE */}</Text>
+            <FlatList
+                data={filteredPosts}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => {
+
+                    const isLiked = like.some(likeItem => likeItem.id === item.id);
+                    const isBookmarked = bookmark.some(bookmarkItem => bookmarkItem.id === item.id);
+
+
+                    const toggleBookmark = () => {
+                        if (isBookmarked) {
+                            removeBookmark(item.id);
+                        }
+                        else {
+                            addBookmark(item);
+                        }
+                    };
+
+                    const toggleLike = () => {
+                        if (isLiked) {
+                            removeLike(item.id);
+                        }
+                        else {
+                            addLike(item);
+                        }
+                    };
+
+                    const bookmarkIcon = isBookmarked ? 'bookmark' : 'bookmark-o';
+                    const heartIcon = isLiked ? 'heart' : 'heart-o'
+
+                    return (
+                        <View style={styles.postContainer}>
+                            <TouchableOpacity>
+                                <Card
+                                    style={styles.postInnerWrapper}
+                                    onPress={() => navigation.navigate("PostDetails", { item: item })}
+                                >
+                                    <ImageBackground>
+                                        <TouchableOpacity style={styles.heart} onPress={toggleLike}>
+                                            <FontAwesome name={heartIcon} size={28} color={colors.red} />
+                                        </TouchableOpacity>
+                                    </ImageBackground>
+                                    <CardCover>
+                                        <Text style={styles.postTitle}>{item.title}</Text>
+                                        <Text style={styles.postLocation}>
+                                            <MaterialIcons
+                                                name='place' size={15} color={colors.darkGray}
+                                            />
+                                            {item.location}
+                                        </Text>
+                                        <Text style={styles.postDescription}>{item.description}</Text>
+                                    </CardCover>
+                                </Card>
+                            </TouchableOpacity>
+                        </View>
+                    );
+                }}
+                ListEmptyComponent={<Text>No posts found for the selected category.</Text>}
+            />
 
 
         </SafeAreaView>
@@ -79,6 +179,24 @@ const styles = StyleSheet.create({
     popularMoreButton: {
         alignSelf: 'center',
         marginLeft: 222,
+    },
+    postContainer: {
+
+    },
+    postTitle: {
+
+    },
+    postDescription: {
+
+    },
+    postLocation: {
+
+    },
+    postPrice: {
+
+    },
+    postRating: {
+
     }
 })
 

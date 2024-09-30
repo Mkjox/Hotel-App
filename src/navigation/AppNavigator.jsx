@@ -63,6 +63,12 @@ function StackNavigator() {
                 component={TabNavigator}
                 options={{ headerShown: false }}
             />
+
+            <Stack.Screen 
+                name="PostDetails"
+                component={PostDetails}
+                options={{headerShown: false}}
+            />
         </Stack.Navigator>
     );
 }
