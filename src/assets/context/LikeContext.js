@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LikeContext = createContext();
@@ -24,7 +24,9 @@ export const LikeProvider = ({ children }) => {
     useEffect(() => {
         const saveLike = async () => {
             try {
-                await AsyncStorage.setItem('like', JSON.stringify(like));
+                if (like.length > 0) {
+                    await AsyncStorage.setItem('like', JSON.stringify(like));
+                }
             }
             catch (error) {
                 console.error('Failed to save likes:', error);
@@ -34,7 +36,9 @@ export const LikeProvider = ({ children }) => {
     }, [like]);
 
     const addLike = (item) => {
-        setLike([...like, item]);
+        if (!like.some(likedItem => likedItem.id === item.id)) {
+            setLike([...like, item]);
+        }
     };
 
     const removeLike = (itemId) => {

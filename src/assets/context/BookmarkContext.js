@@ -31,14 +31,14 @@ export const BookmarkProvider = ({ children }) => {
             }
         }
         addBookmark();
-    }, [cart]);
+    }, [bookmark]);
 
     const addBookmark = (item) => {
         setBookmark([...bookmark, item]);
     };
 
     const removeBookmark = (itemId) => {
-        const updatedLike = cart.filter(item => item.id !== itemId);
+        const updatedLike = bookmark.filter(item => item.id !== itemId);
         setBookmark(updatedLike);
     };
 

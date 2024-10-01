@@ -1,15 +1,8 @@
 import React, { useEffect } from 'react';
-import { DarkTheme, NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 import * as SplashScreen from 'expo-splash-screen';
 import {
   useFonts,
-  Roboto_100Thin,
-  Roboto_100Thin_Italic,
-  Roboto_300Light,
   Roboto_300Light_Italic,
   Roboto_400Regular,
   Roboto_400Regular_Italic,
@@ -21,16 +14,20 @@ import {
 import {
   Sen_400Regular,
   Sen_700Bold,
-  Sen_800ExtraBold
 } from '@expo-google-fonts/sen';
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold
+} from '@expo-google-fonts/inter';
+import { LikeProvider } from './src/assets/context/LikeContext';
+import { BookmarkProvider } from './src/assets/context/BookmarkContext';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [loaded, error] = useFonts({
-    Roboto_100Thin,
-    Roboto_100Thin_Italic,
-    Roboto_300Light,
     Roboto_300Light_Italic,
     Roboto_400Regular,
     Roboto_400Regular_Italic,
@@ -40,11 +37,11 @@ export default function App() {
     Roboto_700Bold_Italic,
     Sen_400Regular,
     Sen_700Bold,
-    Sen_800ExtraBold
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold
   });
-
-  const height = Dimensions.get('screen').height;
-  const width = Dimensions.get('screen').width;
 
   useEffect(() => {
     if (loaded || error) {
@@ -56,6 +53,12 @@ export default function App() {
     return null;
   }
 
-  return <AppNavigator />;
+  return (
+    <LikeProvider>
+      <BookmarkProvider>
+        <AppNavigator />
+      </BookmarkProvider>
+    </LikeProvider>
+  );
 
 };

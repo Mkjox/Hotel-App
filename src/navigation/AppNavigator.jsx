@@ -9,6 +9,7 @@ import Bookmark from "../screens/Bookmark";
 import Profile from "../screens/Profile";
 import CustomTabBar from "../components/CustomTabBar";
 import Details from '../screens/Details';
+import PostDetails from '../screens/PostDetails';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
