@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     FlatList,
     ImageBackground,
+    ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -20,12 +21,11 @@ import LikeContext from "../assets/context/LikeContext";
 import BookmarkContext from "../assets/context/BookmarkContext";
 import colors from "../assets/colors/colors.js";
 import postData from "../assets/data/postData.js";
-import { Card } from "react-native-paper";
 
 const Home = () => {
     const [selectedCategory, setSelectedCategory] = useState("all");
-
     const navigation = useNavigation();
+
     const { like, addLike, removeLike } = useContext(LikeContext);
     const { bookmark, addBookmark, removeBookmark } = useContext(BookmarkContext);
 
@@ -42,50 +42,139 @@ const Home = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.title}>
-                <Text style={styles.location}>Current location</Text>
-                <View style={styles.locationIconWrapper}>
-                    <Ionicons name="location" size={24} />
-                    <Text>DYNAMIC LOCATION</Text>
+            <ScrollView>
+                <View style={styles.title}>
+                    <Text style={styles.location}>Current location</Text>
+                    <View style={styles.locationIconWrapper}>
+                        <Ionicons name="location" size={24} />
+                        <Text>DYNAMIC LOCATION</Text>
+                    </View>
+                    <View style={styles.notificationIcon}>
+                        <Feather name="bell" size={24} />
+                        <Text> {/* TRY TO ADD RED DOT ON IT FOR NOTIFICATIONS */}</Text>
+                    </View>
                 </View>
-                <View style={styles.notificationIcon}>
-                    <Feather name="bell" size={24} />
-                    <Text> {/* TRY TO ADD RED DOT ON IT FOR NOTIFICATIONS */}</Text>
-                </View>
-            </View>
 
-            <View style={styles.categoryWrapper}>
-                {categories.map((category, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={[
-                            styles.categoryButton,
-                            selectedCategory === category && styles.selectedCategoryButton,
-                        ]}
-                        onPress={() => setSelectedCategory(category)}
-                    >
-                        <Text
+                <View style={styles.categoryWrapper}>
+                    {categories.map((category, index) => (
+                        <TouchableOpacity
+                            key={index}
                             style={[
-                                styles.categoryText,
-                                selectedCategory === category && styles.selectedCategoryText,
+                                styles.categoryButton,
+                                selectedCategory === category && styles.selectedCategoryButton,
                             ]}
+                            onPress={() => setSelectedCategory(category)}
                         >
-                            {category.charAt(0).toUpperCase() + category.slice(1)}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
+                            <Text
+                                style={[
+                                    styles.categoryText,
+                                    selectedCategory === category && styles.selectedCategoryText,
+                                ]}
+                            >
+                                {category.charAt(0).toUpperCase() + category.slice(1)}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
 
-            <View style={styles.highlightedWrapper}>
-                <Text style={styles.highlightedTitle}>Near Location</Text>
-                <Text style={styles.highlightedMoreButton}>See All</Text>
-            </View>
+                <View style={styles.highlightedWrapper}>
+                    <Text style={styles.highlightedTitle}>Near Location</Text>
+                    <Text style={styles.highlightedMoreButton}>See All</Text>
+                </View>
 
-            <View>
+                <View>
+                    <FlatList
+                        alwaysBounceVertical
+                        showsHorizontalScrollIndicator={false}
+                        horizontal
+                        data={filteredPosts}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => {
+                            const isLiked = like.some((likeItem) => likeItem.id === item.id);
+                            const isBookmarked = bookmark.some(
+                                (bookmarkItem) => bookmarkItem.id === item.id
+                            );
+
+                            const toggleBookmark = () => {
+                                if (isBookmarked) {
+                                    removeBookmark(item.id);
+                                } else {
+                                    addBookmark(item);
+                                }
+                            };
+
+                            const toggleLike = () => {
+                                if (isLiked) {
+                                    removeLike(item.id);
+                                } else {
+                                    addLike(item);
+                                }
+                            };
+
+                            const bookmarkIcon = isBookmarked ? "bookmark" : "bookmark-o";
+                            const heartIcon = isLiked ? "heart" : "heart-o";
+
+                            return (
+                                <View style={styles.nearPostContainer}>
+                                    <TouchableOpacity
+                                        onPress={() => navigation.navigate('PostDetails', { item: item })}>
+                                        <View
+                                            style={styles.nearPostInnerWrapper}
+                                        >
+                                            <ImageBackground
+                                                src="https://picsum.photos/700"
+                                                style={styles.nearPostPhoto}
+                                                imageStyle={{ borderRadius: 6 }}
+                                            >
+                                                <TouchableOpacity style={styles.nearPostHeart} onPress={toggleLike}>
+                                                    <FontAwesome
+                                                        name={heartIcon}
+                                                        size={18}
+                                                        color={colors.red}
+                                                    />
+                                                </TouchableOpacity>
+                                            </ImageBackground>
+                                            <View style={styles.nearPostWrapper}>
+                                                <Text style={styles.nearPostTitle}>{item.title}</Text>
+                                                <Text style={styles.nearPostLocation}>
+                                                    {/* <MaterialIcons
+                                                name="place"
+                                                size={15}
+                                                color={colors.darkGray}
+                                            /> */}
+                                                    {item.location}
+                                                </Text>
+
+                                                <Text style={styles.nearPostPrice}>
+                                                    ${item.price}<Text style={styles.nearPostPriceNight}>/night</Text>
+                                                </Text>
+                                            </View>
+                                            <Text style={styles.nearPostRating}>
+                                                <FontAwesome
+                                                    name="star"
+                                                    size={16}
+                                                    color={colors.yellow}
+                                                />
+                                                {item.rating}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            );
+                        }}
+                        ListEmptyComponent={
+                            <Text>No posts found for the selected category.</Text>
+                        }
+                    />
+                </View>
+
+                <View style={styles.popularWrapper}>
+                    <Text style={styles.popularTitle}>Popular Hotel</Text>
+                    <Text style={styles.popularMoreButton}>See All</Text>
+                </View>
+
                 <FlatList
                     alwaysBounceVertical
-                    showsHorizontalScrollIndicator={false}
-                    horizontal
                     data={filteredPosts}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => {
@@ -114,20 +203,17 @@ const Home = () => {
                         const heartIcon = isLiked ? "heart" : "heart-o";
 
                         return (
-                            <View style={styles.nearPostContainer}>
-                                <TouchableOpacity>
+                            <View style={styles.postContainer}>
+                                <TouchableOpacity onPress={() => navigation.navigate('PostDetails', { item: item })}>
                                     <View
-                                        style={styles.nearPostInnerWrapper}
-                                        onPress={() =>
-                                            navigation.navigate("PostDetails", { item: item })
-                                        }
+                                        style={styles.postInnerWrapper}
                                     >
                                         <ImageBackground
                                             src="https://picsum.photos/700"
-                                            style={styles.nearPostPhoto}
+                                            style={styles.postPhoto}
                                             imageStyle={{ borderRadius: 6 }}
                                         >
-                                            <TouchableOpacity style={styles.nearPostHeart} onPress={toggleLike}>
+                                            <TouchableOpacity style={styles.heart} onPress={toggleLike}>
                                                 <FontAwesome
                                                     name={heartIcon}
                                                     size={18}
@@ -135,9 +221,9 @@ const Home = () => {
                                                 />
                                             </TouchableOpacity>
                                         </ImageBackground>
-                                        <View style={styles.nearPostWrapper}>
-                                            <Text style={styles.nearPostTitle}>{item.title}</Text>
-                                            <Text style={styles.nearPostLocation}>
+                                        <View style={styles.postWrapper}>
+                                            <Text style={styles.postTitle}>{item.title}</Text>
+                                            <Text style={styles.postLocation}>
                                                 {/* <MaterialIcons
                                                 name="place"
                                                 size={15}
@@ -146,11 +232,12 @@ const Home = () => {
                                                 {item.location}
                                             </Text>
 
-                                            <Text style={styles.nearPostPrice}>
-                                                ${item.price}<Text style={styles.nearPostPriceDay}>/night</Text>
-                                            </Text>
+
                                         </View>
-                                        <Text style={styles.nearPostRating}>
+                                        <Text style={styles.postPrice}>
+                                            ${item.price}<Text style={styles.postPriceNight}>/night</Text>
+                                        </Text>
+                                        <Text style={styles.postRating}>
                                             <FontAwesome
                                                 name="star"
                                                 size={16}
@@ -167,97 +254,7 @@ const Home = () => {
                         <Text>No posts found for the selected category.</Text>
                     }
                 />
-            </View>
-
-            <View style={styles.popularWrapper}>
-                <Text style={styles.popularTitle}>Popular Hotel</Text>
-                <Text style={styles.popularMoreButton}>See All</Text>
-            </View>
-
-            <FlatList
-                alwaysBounceVertical
-                data={filteredPosts}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => {
-                    const isLiked = like.some((likeItem) => likeItem.id === item.id);
-                    const isBookmarked = bookmark.some(
-                        (bookmarkItem) => bookmarkItem.id === item.id
-                    );
-
-                    const toggleBookmark = () => {
-                        if (isBookmarked) {
-                            removeBookmark(item.id);
-                        } else {
-                            addBookmark(item);
-                        }
-                    };
-
-                    const toggleLike = () => {
-                        if (isLiked) {
-                            removeLike(item.id);
-                        } else {
-                            addLike(item);
-                        }
-                    };
-
-                    const bookmarkIcon = isBookmarked ? "bookmark" : "bookmark-o";
-                    const heartIcon = isLiked ? "heart" : "heart-o";
-
-                    return (
-                        <View style={styles.postContainer}>
-                            <TouchableOpacity>
-                                <View
-                                    style={styles.postInnerWrapper}
-                                    onPress={() =>
-                                        navigation.navigate("PostDetails", { item: item })
-                                    }
-                                >
-                                    <ImageBackground
-                                        src="https://picsum.photos/700"
-                                        style={styles.postPhoto}
-                                        imageStyle={{ borderRadius: 6 }}
-                                    >
-                                        <TouchableOpacity style={styles.heart} onPress={toggleLike}>
-                                            <FontAwesome
-                                                name={heartIcon}
-                                                size={18}
-                                                color={colors.red}
-                                            />
-                                        </TouchableOpacity>
-                                    </ImageBackground>
-                                    <View style={styles.postWrapper}>
-                                        <Text style={styles.postTitle}>{item.title}</Text>
-                                        <Text style={styles.postLocation}>
-                                            {/* <MaterialIcons
-                                                name="place"
-                                                size={15}
-                                                color={colors.darkGray}
-                                            /> */}
-                                            {item.location}
-                                        </Text>
-
-
-                                    </View>
-                                    <Text style={styles.postPrice}>
-                                        ${item.price}<Text style={styles.postPriceDay}>/night</Text>
-                                    </Text>
-                                    <Text style={styles.postRating}>
-                                        <FontAwesome
-                                            name="star"
-                                            size={16}
-                                            color={colors.yellow}
-                                        />
-                                        {item.rating}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    );
-                }}
-                ListEmptyComponent={
-                    <Text>No posts found for the selected category.</Text>
-                }
-            />
+            </ScrollView>
         </SafeAreaView>
     );
 };
@@ -337,7 +334,6 @@ const styles = StyleSheet.create({
     },
     nearPostTitle: {
         fontFamily: 'Inter_600SemiBold',
-        width: 160,
         marginTop: 5
     },
     nearPostLocation: {
@@ -349,10 +345,11 @@ const styles = StyleSheet.create({
         height: 150
     },
     nearPostPrice: {
-
+        marginTop: 10,
+        color: colors.blue,
     },
-    nearPostPriceDay: {
-
+    nearPostPriceNight: {
+        color: colors.darkGray
     },
     nearPostRating: {
         position: 'absolute',
@@ -435,7 +432,7 @@ const styles = StyleSheet.create({
         bottom: 20,
         left: 170
     },
-    postPriceDay: {
+    postPriceNight: {
         color: colors.darkGray
     },
     heart: {
