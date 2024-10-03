@@ -1,5 +1,5 @@
 import { Entypo, Feather, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Dimensions } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Dimensions, FlatList, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../assets/colors/colors";
 
@@ -25,7 +25,7 @@ const PostDetails = ({ route, navigation }) => {
 
             <View style={{ margin: 15 }}>
                 <ImageBackground
-                    src="https://picsum.photos/700"
+                    source={{ uri: item.thumbnail }}
                     style={styles.postPhoto}
                     imageStyle={{ borderRadius: 10 }}>
 
@@ -57,17 +57,20 @@ const PostDetails = ({ route, navigation }) => {
                 </View>
 
                 <View>
-                    <Text style={styles.previewTitle}></Text>
-                    <Text>THIS IS WHERE IMAGES NEED TO BE</Text>
+                    <Text style={styles.previewTitle}>Preview</Text>
                 </View>
             </View>
+
+            <TouchableOpacity style={styles.button}>
+                <Text style={styles.buttonText}>Book Now</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     top: {
         flexDirection: 'row',
@@ -118,7 +121,15 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: colors.slightGray,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 3
     },
     title: {
         fontFamily: 'Inter_600SemiBold',
@@ -147,8 +158,30 @@ const styles = StyleSheet.create({
     },
     postPhoto: {
         height: screenHeight * 0.3,
-        marginBottom: 15
+        marginBottom: 15,
+        elevation: 5
     },
+    previewTitle: {
+        marginTop: 10,
+        fontFamily: 'Inter_600SemiBold'
+    },
+    button: {
+        justifyContent: 'center',
+        padding: 10,
+        backgroundColor: colors.blue,
+        position: 'absolute',
+        bottom: -200,
+        alignSelf: 'center',
+        width: 300,
+        height: 50,
+        borderRadius: 5,
+        elevation: 5
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: colors.white,
+        fontFamily: 'Arvo_700Bold'
+    }
 });
 
 export default PostDetails;

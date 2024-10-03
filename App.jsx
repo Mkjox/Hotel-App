@@ -21,6 +21,12 @@ import {
   Inter_600SemiBold,
   Inter_700Bold
 } from '@expo-google-fonts/inter';
+import {
+  Arvo_400Regular,
+  Arvo_400Regular_Italic,
+  Arvo_700Bold,
+  Arvo_700Bold_Italic
+} from '@expo-google-fonts/arvo';
 import { LikeProvider } from './src/assets/context/LikeContext';
 import { BookmarkProvider } from './src/assets/context/BookmarkContext';
 
@@ -40,7 +46,11 @@ export default function App() {
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
-    Inter_700Bold
+    Inter_700Bold,
+    Arvo_400Regular,
+    Arvo_400Regular_Italic,
+    Arvo_700Bold,
+    Arvo_700Bold_Italic
   });
 
   useEffect(() => {

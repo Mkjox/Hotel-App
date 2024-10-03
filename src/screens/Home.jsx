@@ -122,7 +122,7 @@ const Home = () => {
                                             style={styles.nearPostInnerWrapper}
                                         >
                                             <ImageBackground
-                                                src="https://picsum.photos/700"
+                                                src={item.thumbnail}
                                                 style={styles.nearPostPhoto}
                                                 imageStyle={{ borderRadius: 6 }}
                                             >
@@ -209,7 +209,7 @@ const Home = () => {
                                         style={styles.postInnerWrapper}
                                     >
                                         <ImageBackground
-                                            src="https://picsum.photos/700"
+                                            source={{uri:item.thumbnail}}
                                             style={styles.postPhoto}
                                             imageStyle={{ borderRadius: 6 }}
                                         >
