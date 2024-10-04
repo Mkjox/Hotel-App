@@ -209,15 +209,22 @@ const Home = () => {
                                         style={styles.postInnerWrapper}
                                     >
                                         <ImageBackground
-                                            source={{uri:item.thumbnail}}
+                                            source={{ uri: item.thumbnail }}
                                             style={styles.postPhoto}
                                             imageStyle={{ borderRadius: 6 }}
                                         >
-                                            <TouchableOpacity style={styles.heart} onPress={toggleLike}>
+                                            <TouchableOpacity style={styles.heartWrapper} onPress={toggleLike}>
                                                 <FontAwesome
                                                     name={heartIcon}
                                                     size={18}
                                                     color={colors.red}
+                                                />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={styles.bookmarkWrapper} onPress={toggleBookmark}>
+                                                <FontAwesome
+                                                    name={bookmarkIcon}
+                                                    size={18}
+                                                    color={colors.darkBlue}
                                                 />
                                             </TouchableOpacity>
                                         </ImageBackground>
@@ -374,7 +381,9 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 5
+        elevation: 5,
+        borderWidth: 1,
+        borderColor: colors.darkGray
     },
     popularWrapper: {
         flexDirection: "row",
@@ -435,7 +444,7 @@ const styles = StyleSheet.create({
     postPriceNight: {
         color: colors.darkGray
     },
-    heart: {
+    heartWrapper: {
         backgroundColor: 'white',
         height: 35,
         width: 35,
@@ -452,7 +461,30 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 5
+        elevation: 5,
+        borderWidth: 1,
+        borderColor: colors.darkGray
+    },
+    bookmarkWrapper: {
+        backgroundColor: colors.white,
+        height: 35,
+        width: 35,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        right: 15,
+        top: 15,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        borderWidth: 1,
+        borderColor: colors.darkGray
     }
 });
 

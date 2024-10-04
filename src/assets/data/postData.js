@@ -61,7 +61,7 @@ const postData = [
       "https://images.unsplash.com/photo-1565031491910-e57fac031c41",
       "https://images.unsplash.com/photo-1541534401786-4e42045b9279"
     ],
-    "thumbnail": "https://images.unsplash.com/photo-1546182990-dffeafbe841d"
+    "thumbnail": "https://images.unsplash.com/photo-1506812428898-fe5a708f5359"
   },
   {
     "id": 5,
