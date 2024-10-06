@@ -14,6 +14,11 @@ import {
     FlatList,
     ImageBackground,
     ScrollView,
+    Modal,
+    Alert,
+    Pressable,
+    Platform,
+    PermissionsAndroid
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -22,9 +27,15 @@ import BookmarkContext from "../assets/context/BookmarkContext";
 import colors from "../assets/colors/colors.js";
 import popularHotelsData from "../assets/data/popularHotelsData.js";
 import nearLocationData from "../assets/data/nearLocationData.js";
+import MapView, { Marker } from "react-native-maps";
+import Geolocation from 'react-native-geolocation-service';
+import axios from "axios";
 
 const Home = () => {
     const [selectedCategory, setSelectedCategory] = useState("all");
+    const [modalVisible, setModalVisible] = useState(false);
+    const [location, setLocation] = useState(null);
+    const [address, setAddress] = useState({ city: '', country: '' });
     const navigation = useNavigation();
 
     const { like, addLike, removeLike } = useContext(LikeContext);
@@ -40,23 +51,111 @@ const Home = () => {
                     post.category.toLowerCase() === selectedCategory.toLowerCase()
             );
 
-    const filteredPostsNear = 
-            selectedCategory === "all"
-            ?nearLocationData
-            :nearLocationData.filter(
-                (posts) => 
+    const filteredPostsNear =
+        selectedCategory === "all"
+            ? nearLocationData
+            : nearLocationData.filter(
+                (posts) =>
                     posts.category.toLowerCase() === selectedCategory.toLowerCase()
             );
 
+    const getCurrentLocation = () => {
+        Geolocation.getCurrentPosition(
+            position => {
+                console.log('Position:', position);
+                const { latitude, longitude } = position.coords;
+                setLocation({ latitude, longitude });
+            },
+            error => {
+                console.log(error);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+    };
+
+    useEffect(() => {
+        const requestLocationPermission = async () => {
+            if (Platform.OS === 'android') {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                );
+                if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                    console.log('Location permission denied');
+                    return;
+                }
+            }
+            getCurrentLocation();
+        };
+
+        requestLocationPermission();
+    }, []);
+
+    const reverseGeocode = async (lat, lon) => {
+        try {
+            const response = await axios.get(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+            );
+            const { city, country } = response.data.address;
+            setAddress({ city, country });
+        }
+        catch (error) {
+            console.log('Error fetching reverse geocoding data', error);
+        }
+    };
+
+    const handleMapPress = (event) => {
+        const { latitude, longitude } = event.nativeEvent.coordinate;
+        setLocation({ latitude, longitude });
+        reverseGeocode(latitude, longitude);
+    }
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
+                <Modal
+                    animationType="fade"
+                    transparent={false}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.map}>
+                        <MapView
+                            style={styles.mapView}
+                            showsUserLocation
+                            showsMyLocationButton
+                            initialRegion={{
+                                latitude: 37.7749,
+                                longitude: -122.4194,
+                                longitudeDelta: 0.01,
+                                latitudeDelta: 0.01
+                            }}
+                            onPress={handleMapPress}
+                        >
+                            {location && (
+                                <Marker
+                                    coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+                                    title="You are here"
+                                />
+                            )}
+                        </MapView>
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(false)}>
+                            <Text style={styles.buttonCloseText}>Hide Map</Text>
+                        </Pressable>
+                    </View>
+                </Modal>
+
                 <View style={styles.title}>
                     <Text style={styles.location}>Current location</Text>
                     <View style={styles.locationIconWrapper}>
                         <Ionicons name="location" size={24} />
-                        <Text>Location Not Selected</Text>
+                        <Pressable
+                            style={[styles.button, styles.buttonOpen]}
+                            onPress={() => setModalVisible(true)}>
+                            <Text>Show Map</Text>
+                        </Pressable>
                     </View>
                     <View style={styles.notificationIcon}>
                         <Feather name="bell" size={24} />
@@ -91,7 +190,7 @@ const Home = () => {
                     <Text style={styles.highlightedMoreButton}>See All</Text>
                 </View>
 
-                <View>
+                <View style={{ margin: 10 }}>
                     <FlatList
                         alwaysBounceVertical
                         showsHorizontalScrollIndicator={false}
@@ -289,6 +388,32 @@ const styles = StyleSheet.create({
     locationIconWrapper: {
         flexDirection: "row",
         alignItems: "center",
+    },
+    map: {
+        flex: 1
+    },
+    mapView: {
+        width: '100%',
+        height: '90%'
+    },
+    button: {
+
+    },
+    buttonOpen: {
+
+    },
+    buttonClose: {
+        padding: 10,
+        alignSelf: 'center',
+        marginTop: '5%',
+        backgroundColor: colors.blue,
+        width: '45%',
+        borderRadius: 5
+    },
+    buttonCloseText: {
+        color: colors.white,
+        textAlign: 'center',
+        fontFamily: 'Roboto_500Medium'
     },
     categoryWrapper: {
         flexDirection: 'row',
