@@ -20,7 +20,8 @@ import { useNavigation } from "@react-navigation/native";
 import LikeContext from "../assets/context/LikeContext";
 import BookmarkContext from "../assets/context/BookmarkContext";
 import colors from "../assets/colors/colors.js";
-import postData from "../assets/data/postData.js";
+import popularHotelsData from "../assets/data/popularHotelsData.js";
+import nearLocationData from "../assets/data/nearLocationData.js";
 
 const Home = () => {
     const [selectedCategory, setSelectedCategory] = useState("all");
@@ -29,14 +30,22 @@ const Home = () => {
     const { like, addLike, removeLike } = useContext(LikeContext);
     const { bookmark, addBookmark, removeBookmark } = useContext(BookmarkContext);
 
-    const categories = ["all", ...new Set(postData.map((post) => post.category))];
+    const categories = ["all", ...new Set(popularHotelsData.map((post) => post.category))];
 
-    const filteredPosts =
+    const filteredPostsPopular =
         selectedCategory === "all"
-            ? postData
-            : postData.filter(
+            ? popularHotelsData
+            : popularHotelsData.filter(
                 (post) =>
                     post.category.toLowerCase() === selectedCategory.toLowerCase()
+            );
+
+    const filteredPostsNear = 
+            selectedCategory === "all"
+            ?nearLocationData
+            :nearLocationData.filter(
+                (posts) => 
+                    posts.category.toLowerCase() === selectedCategory.toLowerCase()
             );
 
 
@@ -47,7 +56,7 @@ const Home = () => {
                     <Text style={styles.location}>Current location</Text>
                     <View style={styles.locationIconWrapper}>
                         <Ionicons name="location" size={24} />
-                        <Text>DYNAMIC LOCATION</Text>
+                        <Text>Location Not Selected</Text>
                     </View>
                     <View style={styles.notificationIcon}>
                         <Feather name="bell" size={24} />
@@ -87,7 +96,7 @@ const Home = () => {
                         alwaysBounceVertical
                         showsHorizontalScrollIndicator={false}
                         horizontal
-                        data={filteredPosts}
+                        data={filteredPostsNear}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => {
                             const isLiked = like.some((likeItem) => likeItem.id === item.id);
@@ -175,7 +184,7 @@ const Home = () => {
 
                 <FlatList
                     alwaysBounceVertical
-                    data={filteredPosts}
+                    data={filteredPostsPopular}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => {
                         const isLiked = like.some((likeItem) => likeItem.id === item.id);
@@ -361,7 +370,7 @@ const styles = StyleSheet.create({
     nearPostRating: {
         position: 'absolute',
         right: 5,
-        bottom: 35,
+        bottom: 30,
         fontFamily: 'Roboto_500Medium'
     },
     nearPostHeart: {

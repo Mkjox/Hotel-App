@@ -1,12 +1,15 @@
 import { Entypo, Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../assets/colors/colors";
+import { useNavigation } from "@react-navigation/native";
 
 const screenWidth = Dimensions.get("screen").width;
 
 const Profile = () => {
+    const navigation = useNavigation();
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Profile</Text>
@@ -36,11 +39,11 @@ const Profile = () => {
 
             <View style={styles.line}></View>
 
-            <View style={styles.options}>
+            <TouchableOpacity onPress={() => navigation.navigate('Liked')} style={styles.options}>
                 <Entypo name="heart-outlined" size={24} style={styles.optionsInnerLeft} />
                 <Text style={styles.optionsText}>Liked</Text>
                 <Entypo name="chevron-right" size={24} style={styles.optionsInnerRight} />
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.line}></View>
 

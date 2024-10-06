@@ -10,6 +10,7 @@ import Profile from "../screens/Profile";
 import CustomTabBar from "../components/CustomTabBar";
 import Details from '../screens/Details';
 import PostDetails from '../screens/PostDetails';
+import Liked from '../screens/Liked';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -65,10 +66,16 @@ function StackNavigator() {
                 options={{ headerShown: false }}
             />
 
-            <Stack.Screen 
+            <Stack.Screen
                 name="PostDetails"
                 component={PostDetails}
-                options={{headerShown: false}}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name='Liked'
+                component={Liked}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );
