@@ -14,7 +14,7 @@ const Liked = () => {
     if (!like || like.length === 0) {
         return (
             <SafeAreaView style={styles.containerEmpty}>
-                <Text style={styles.emptyText}>There is no liked posts right now.</Text>
+                <Text style={styles.emptyText}>There are no liked posts right now.</Text>
             </SafeAreaView>
         )
     }

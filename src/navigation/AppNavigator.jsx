@@ -11,6 +11,7 @@ import CustomTabBar from "../components/CustomTabBar";
 import Details from '../screens/Details';
 import PostDetails from '../screens/PostDetails';
 import Liked from '../screens/Liked';
+import HotelBookingScreen from '../screens/HotelBookingScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -76,6 +77,12 @@ function StackNavigator() {
                 name='Liked'
                 component={Liked}
                 options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name='HotelBooking'
+                component={HotelBookingScreen}
+                options={{headerShown: false}}
             />
         </Stack.Navigator>
     );

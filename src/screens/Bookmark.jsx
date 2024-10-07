@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     bookmarkWrapper: {
-        margin: 10,
+        margin: 15,
     },
     bookmarkImage: {
         height: 200,

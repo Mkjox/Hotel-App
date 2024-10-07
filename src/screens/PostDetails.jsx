@@ -61,7 +61,7 @@ const PostDetails = ({ route, navigation }) => {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HotelBooking', { item })}>
                 <Text style={styles.buttonText}>Book Now</Text>
             </TouchableOpacity>
         </SafeAreaView>
