@@ -1,59 +1,49 @@
+import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import { View, Text, Button, Alert, StyleSheet } from "react-native";
 import { Agenda } from "react-native-calendars";
 
 const HotelBookingScreen = ({ route, navigation }) => {
     const { item } = route.params;
-    const [items, setItems] = useState({});
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [showPicker, setShowPicker] = useState(false);
 
-    const handleBookNow = (selectedDate) => {
-        const newItems = { ...items };
-
-        if (!newItems[selectedDate]) {
-            newItems[selectedDate] = [];
+    const handleDateChange = (event, date) => {
+        if (event.type === "set") {
+            setSelectedDate(date);
         }
+        setShowPicker(false);
+    }
 
-        newItems[selectedDate].push({
-            name: `Booking at ${item.title}`,
-            description: `${item.description} - $${item.price}/night`,
-            time: '12:00 PM',
-            height: 100
-        });
+    const handleBookNow = () => {
+        const formattedDate = selectedDate.toISOString().split('T')[0];
 
-        setItems(newItems);
+        const newBooking = {
+            date: formattedDate,
+            event: {
+                title: item.title,
+                time: selectedDate.toLocaleDateString([], { hour: '2-digit', minute: '2-digit' }),
+            },
+        };
 
-        navigation.navigate('Schedule', {
-            newBooking: {
-                date: '2024-10-08',
-                event: {
-                    name: `Booking at ${item.title}`,
-                    time: '12:00 PM',
-                }
-            }
-        });
+        console.log("Navigating with Booking:", newBooking);
+        navigation.navigate("Schedule", { newBooking });
     };
 
     return (
         <View style={{ flex: 1 }}>
-            <Agenda
-                items={items}
-                selected={new Date().toISOString().split('T')[0]} //Today's date
-                renderItem={(item) => (
-                    <View style={styles.item}>
-                        <Text>{item.name}</Text>
-                        <Text>{item.description}</Text>
-                    </View>
-                )}
-                renderEmptyDate={() => <View style={styles.emptyDate}><Text>No events for this date.</Text></View>}
-                rowHasChanged={(r1, r2) => r1.name !== r2.name}
-            />
+            <Text>{item.title}</Text>
+            <Button title="Select Date" onPress={() => setShowPicker(true)} />
+            {showPicker && (
+                <DateTimePicker
+                    value={selectedDate}
+                    mode="date"
+                    display="default"
+                    onChange={handleDateChange}
+                />
+            )}
 
-            <View style={styles.hotelInfo}>
-                <Text style={styles.hotelTitle}>{item.title}</Text>
-                <Text>{item.location}</Text>
-                <Text>{item.price}</Text>
-                <Button title="Book Now" onPress={() => handleBookNow('2024-10-07')} />
-            </View>
+            <Button title="Book Now" onPress={handleBookNow} />
         </View>
     )
 }
