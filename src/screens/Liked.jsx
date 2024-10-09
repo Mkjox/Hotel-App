@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     likeWrapper: {
-        margin: 10
+        margin: 15
     },
     likeImage:{
         height: 200,

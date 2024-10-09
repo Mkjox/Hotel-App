@@ -2,8 +2,6 @@ import { useState, useContext, useEffect } from "react";
 import {
     FontAwesome,
     Feather,
-    Ionicons,
-    MaterialIcons
 } from "@expo/vector-icons";
 import {
     View,
@@ -27,7 +25,7 @@ import BookmarkContext from "../assets/context/BookmarkContext";
 import colors from "../assets/colors/colors.js";
 import popularHotelsData from "../assets/data/popularHotelsData.js";
 import nearLocationData from "../assets/data/nearLocationData.js";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Geolocation from 'react-native-geolocation-service';
 import axios from "axios";
 
@@ -59,36 +57,40 @@ const Home = () => {
                     posts.category.toLowerCase() === selectedCategory.toLowerCase()
             );
 
-    const getCurrentLocation = () => {
-        Geolocation.getCurrentPosition(
-            position => {
-                console.log('Position:', position);
-                const { latitude, longitude } = position.coords;
-                setLocation({ latitude, longitude });
-            },
-            error => {
-                console.log(error);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
-    };
-
-    useEffect(() => {
-        const requestLocationPermission = async () => {
-            if (Platform.OS === 'android') {
-                const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-                );
-                if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-                    console.log('Location permission denied');
-                    return;
-                }
+    async function requestLocationPermission() {
+        if (Platform.OS === 'android') {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+                title: "Location Access Required",
+                message: "This app needs to access your location",
             }
-            getCurrentLocation();
-        };
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("Location permission granted");
+                return true;
+            }
+            else {
+                console.log("Location permission denied");
+                return false;
+            }
+        }
+        return true;
+    }
 
-        requestLocationPermission();
-    }, []);
+    async function getCurrentPosition() {
+        const hasPermission = await requestLocationPermission();
+        if (hasPermission) {
+            Geolocation.getCurrentPosition(
+                position => {
+                    console.log(position);
+                },
+                error => {
+                    console.log(error.code, error.message);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            )
+        }
+    }
 
     const reverseGeocode = async (lat, lon) => {
         try {
@@ -117,13 +119,18 @@ const Home = () => {
                     transparent={false}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
+                        Alert.alert('Map has been closed.');
                         setModalVisible(!modalVisible);
                     }}>
                     <View style={styles.map}>
                         <MapView
                             style={styles.mapView}
                             showsUserLocation
+                            provider={PROVIDER_GOOGLE}
+                            customMapStyle={[]}
+                            zoomControlEnabled
+                            mapType="terrain"
+                            showsBuildings
                             showsMyLocationButton
                             initialRegion={{
                                 latitude: 37.7749,
@@ -149,14 +156,11 @@ const Home = () => {
 
                 <View style={styles.title}>
                     <Text style={styles.location}>Current location</Text>
-                    <View style={styles.locationIconWrapper}>
-                        <Ionicons name="location" size={24} />
-                        <Pressable
-                            style={[styles.button, styles.buttonOpen]}
-                            onPress={() => setModalVisible(true)}>
-                            <Text>Show Map</Text>
-                        </Pressable>
-                    </View>
+                    <TouchableOpacity onPress={() => setModalVisible(true)}>
+                        <Text style={styles.locationText}>
+                            {address.city ? `${address.city}, ${address.country}` : "No location selected"}
+                        </Text>
+                    </TouchableOpacity>
                     <View style={styles.notificationIcon}>
                         <Feather name="bell" size={24} />
                         <Text> {/* TRY TO ADD RED DOT ON IT FOR NOTIFICATIONS */}</Text>
@@ -384,17 +388,20 @@ const styles = StyleSheet.create({
     },
     location: {
         marginLeft: 5,
+        fontFamily: 'Inter_500Medium'
     },
-    locationIconWrapper: {
-        flexDirection: "row",
-        alignItems: "center",
+    locationText: {
+        marginLeft: 5,
+        marginBottom: 5,
+        fontFamily: 'Roboto_500Medium',
+        color: colors.darkGray
     },
     map: {
         flex: 1
     },
     mapView: {
         width: '100%',
-        height: '90%'
+        height: '90%',
     },
     button: {
 

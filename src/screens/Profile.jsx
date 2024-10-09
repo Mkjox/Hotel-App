@@ -19,23 +19,23 @@ const Profile = () => {
                     <Text style={styles.profileName}>Ashley Stan</Text>
                     <Text style={styles.profileSub}>Show Profile</Text>
                 </View>
-                <Entypo name="chevron-right" size={24} />
+                <Entypo name="chevron-down" size={24} />
             </View>
 
             {/* STRAIGHT LINE */}
             <View style={styles.line}></View>
 
-            <View style={styles.options}>
+            <TouchableOpacity style={styles.options}>
                 <Ionicons name="person-outline" size={24} style={styles.optionsInnerLeft} />
                 <Text style={styles.optionsText}>Personal Info</Text>
                 <Entypo name="chevron-right" size={24} style={styles.optionsInnerRight} />
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.options}>
+            <TouchableOpacity style={styles.options}>
                 <Octicons name="gear" size={24} style={styles.optionsInnerLeft} />
                 <Text style={styles.optionsText}>Account</Text>
                 <Entypo name="chevron-right" size={24} style={styles.optionsInnerRight} />
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.line}></View>
 
@@ -51,11 +51,11 @@ const Profile = () => {
                 Support
             </Text>
 
-            <View style={styles.options}>
+            <TouchableOpacity style={styles.options}>
                 <MaterialCommunityIcons name="comment-question-outline" size={24} style={styles.optionsInnerLeft} />
                 <Text style={styles.optionsText}>Need Help?</Text>
                 <Entypo name="chevron-right" size={24} style={styles.optionsInnerRight} />
-            </View>
+            </TouchableOpacity>
         </SafeAreaView>
     )
 }

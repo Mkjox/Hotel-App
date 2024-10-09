@@ -18,10 +18,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mkjox.HotelApp"
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2f351114-eccc-4981-a7b3-3debba16c7ff"
+      }
+    },
+    "owner": "mkjox"
   }
 }
