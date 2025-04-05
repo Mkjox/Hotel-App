@@ -41,7 +41,7 @@ const Bookmark = () => {
                                 <TouchableOpacity onPress={() => handleRemoveFromBookmark(item.id)} style={styles.removeButton}>
                                     <FontAwesome
                                         name="bookmark"
-                                        size={25}
+                                        size={23}
                                         color={colors.darkBlue}
                                     />
                                 </TouchableOpacity>

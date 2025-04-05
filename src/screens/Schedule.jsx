@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../assets/colors/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Schedule = ({ navigation, route }) => {
   const [agendaItems, setAgendaItems] = useState({});
@@ -23,8 +24,8 @@ const Schedule = ({ navigation, route }) => {
     try {
       const savedItems = await AsyncStorage.getItem('agendaItems');
       if (savedItems) {
+        // console.log("Loaded agenda items:", savedItems)
         setAgendaItems(JSON.parse(savedItems));
-        console.log("Loaded agenda items:")
       }
     }
     catch (error) {
@@ -42,9 +43,13 @@ const Schedule = ({ navigation, route }) => {
     }
   };
 
-  useEffect(() => {
-    loadAgendaItems();
+  useFocusEffect(
+    useCallback(() => {
+      loadAgendaItems();
+    }, [])
+  );
 
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       const newBooking = route.params?.newBooking;
 
@@ -84,7 +89,7 @@ const Schedule = ({ navigation, route }) => {
           items={agendaItems}
           selected={new Date().toISOString().split('T')[0]}
           renderItem={(item) => (
-            <View style={{ margin: 20 }}>
+            <View style={styles.eventContainer}>
               <Text>{item.title}</Text>
               <Text>{item.time}</Text>
             </View>
@@ -93,6 +98,7 @@ const Schedule = ({ navigation, route }) => {
           pastScrollRange={12}
           futureScrollRange={12}
           rowHasChanged={(r1, r2) => r1.title !== r2.title}
+          refreshing={true}
         />
       </View>
     </SafeAreaView>
@@ -109,10 +115,11 @@ const styles = StyleSheet.create({
   eventContainer: {
     backgroundColor: colors.white,
     padding: 10,
-    margin: 10,
+    marginTop: 25,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.lightGray
+    borderColor: colors.lightGray,
+    width: '95%'
   },
   eventName: {
     fontSize: 16,

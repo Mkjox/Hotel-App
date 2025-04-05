@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
         marginTop: 15
     },
     mainTitle: {
-        fontFamily: 'Inter_600SemiBold'
+        fontFamily: 'Inter_600SemiBold',
+        marginTop: 5
     },
     backIconWrapper: {
         backgroundColor: colors.white,
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         elevation: 10,
-        borderColor: colors.slightGray
+        borderColor: "#D9D9D9"
     },
     backIcon: {
         alignSelf: 'center'

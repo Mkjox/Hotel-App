@@ -16,7 +16,8 @@ import {
     Alert,
     Pressable,
     Platform,
-    PermissionsAndroid
+    PermissionsAndroid,
+    Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -28,6 +29,8 @@ import nearLocationData from "../assets/data/nearLocationData.js";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Geolocation from 'react-native-geolocation-service';
 import axios from "axios";
+
+const { height, width } = Dimensions.get("window");
 
 const Home = () => {
     const [selectedCategory, setSelectedCategory] = useState("all");
@@ -158,7 +161,7 @@ const Home = () => {
                     <Text style={styles.location}>Current location</Text>
                     <TouchableOpacity onPress={() => setModalVisible(true)}>
                         <Text style={styles.locationText}>
-                            {address.city ? `${address.city}, ${address.country}` : "No location selected"}
+                            {address.city ? `${address.city}, ${address.country}` : "Touch here to select location"}
                         </Text>
                     </TouchableOpacity>
                     <View style={styles.notificationIcon}>
@@ -260,15 +263,15 @@ const Home = () => {
                                                 <Text style={styles.nearPostPrice}>
                                                     ${item.price}<Text style={styles.nearPostPriceNight}>/night</Text>
                                                 </Text>
+                                                <Text style={styles.nearPostRating}>
+                                                    <FontAwesome
+                                                        name="star"
+                                                        size={16}
+                                                        color={colors.yellow}
+                                                    />
+                                                    {item.rating}
+                                                </Text>
                                             </View>
-                                            <Text style={styles.nearPostRating}>
-                                                <FontAwesome
-                                                    name="star"
-                                                    size={16}
-                                                    color={colors.yellow}
-                                                />
-                                                {item.rating}
-                                            </Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -463,11 +466,12 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     nearPostContainer: {
-        height: 250,
+        height: height * 0.33,
         width: 250,
-        borderWidth: 0.2,
+        borderWidth: 1,
         marginHorizontal: 5,
         borderRadius: 10,
+        borderColor: '#D9D9D9',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -476,13 +480,16 @@ const styles = StyleSheet.create({
         shadowOpacity: 3,
     },
     nearPostWrapper: {
+
     },
     nearPostInnerWrapper: {
         margin: 10
     },
     nearPostTitle: {
         fontFamily: 'Inter_600SemiBold',
-        marginTop: 5
+        marginTop: 10,
+        maxWidth: '90%',
+        flexWrap: 'wrap',
     },
     nearPostLocation: {
         color: colors.darkGray,
@@ -493,16 +500,16 @@ const styles = StyleSheet.create({
         height: 150
     },
     nearPostPrice: {
-        marginTop: 10,
         color: colors.blue,
+        top: height * 0.1,
+        position: 'absolute'
     },
     nearPostPriceNight: {
         color: colors.darkGray
     },
     nearPostRating: {
-        position: 'absolute',
-        right: 5,
-        bottom: 30,
+        // right: 5,
+        top: 5,
         fontFamily: 'Roboto_500Medium'
     },
     nearPostHeart: {
@@ -532,7 +539,8 @@ const styles = StyleSheet.create({
     },
     postInnerWrapper: {
         borderRadius: 5,
-        borderWidth: 0.2,
+        borderWidth: 1,
+        borderColor: '#D9D9D9',
         flexDirection: 'row',
     },
     popularTitle: {
@@ -558,9 +566,9 @@ const styles = StyleSheet.create({
     },
     postTitle: {
         fontSize: 16,
-        marginTop: 30,
+        marginTop: 10,
         fontFamily: 'Inter_500Medium',
-        maxWidth: 170
+        maxWidth: '95%'
     },
     postDescription: {
         maxWidth: 200
@@ -572,7 +580,7 @@ const styles = StyleSheet.create({
     postRating: {
         position: 'absolute',
         right: 10,
-        top: 15,
+        top: 10,
         fontSize: 16,
         fontFamily: 'Roboto_500Medium'
     },
